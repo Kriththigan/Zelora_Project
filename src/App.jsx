@@ -25,3 +25,14 @@ const INITIAL_CANDIDATES = [
   { id: 13, name: "Lola Kirlin", date: "03 Sep, 2023", score: 4.5, referred: true, stage: "test", hasPhoto: true},
   { id: 14, name: "Virgil Larkin", date: "03 Sep, 2023", score: null, referred: false, stage: "test", hasPhoto: true},
 ];
+
+const AVATAR_PALETTES = [
+  { bg: "#dbeafe", color: "#1d4ed8"},
+  { bg: "#fce7f3", color: "#be185d"},
+  { bg: "#dcfce7", color: "#15803d"},
+  { bg: "#fef9c3", color: "#854d0e"},
+  { bg: "#ede9fe", color: "#6d28d9"},
+  { bg: "#ffedd5", color: "#c2410c"},
+  { bg: "#f0fdf4", color: "#065f46"},
+  { bg: "#fdf2f8", color: "#86198f"},
+];
