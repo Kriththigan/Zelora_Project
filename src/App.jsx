@@ -36,3 +36,23 @@ const AVATAR_PALETTES = [
   { bg: "#f0fdf4", color: "#065f46"},
   { bg: "#fdf2f8", color: "#86198f"},
 ];
+
+// Helpers
+
+function getInitials(name){
+  return name.split(" ").map((p) => p[0]).join("").slice(0,2).toUpperCase();
+}
+
+function getAvatarPalette(id){
+  return AVATAR_PALETTES[id % AVATAR_PALETTES.length];
+}
+
+function StarRating({ score }){
+  if(score === null) return null;
+  return (
+    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "#64748b" }}>
+      <span style={{ color: "#f59e0b", fontSize: 13 }}>★</span>
+      {score} Overall
+    </span>
+  );
+}
