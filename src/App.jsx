@@ -56,3 +56,19 @@ function StarRating({ score }){
     </span>
   );
 }
+
+// Avatar
+
+function Avatar({ candidate, size = 36}){
+  const palette = getAvatarPalette(candidate.id);
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: "50%", flexShrink: 0,
+      background: palette.bg, color: palette.color,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontWeight: 500, fontSize: size * 0.38,
+    }}>
+      {getInitials(candidate.name)}
+    </div>
+  );
+}
