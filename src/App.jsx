@@ -72,3 +72,74 @@ function Avatar({ candidate, size = 36}){
     </div>
   );
 }
+
+// Candidate Card
+
+function CandidateCard({ candidate, onOpen, onDragStart, onDragEnd}){
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      draggable
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onClick={() => onOpen(candidate.id)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "#ffffff",
+        border: `0.5px solid ${hovered ? "#cbd5e1" : "#e2e8f0"}`,
+        borderRadius: 12,
+        padding: "14px",
+        cursor: "pointer",
+        transform: hovered ? "translateY(-2px)" : "none",
+        transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
+        boxShadow: hovered ? "0 4px 16px rgba(0,0,0,0.07)" : "none",
+      }}
+    >
+      <div style={{display: "flex", alignItems: "center", gap: 10, marginBottom: 10}}>
+        <Avatar candidate={candidate}/>
+        <div style={{ flex: 1, minWidth: 0}}>
+          <div style={{ fontSize: 14, fontWeight: 500, color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden",
+            textOverflow: "ellipsis"
+          }}>
+            {candidate.name}
+          </div>
+          <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 1}}>
+            Applied at {candidate.date}
+          </div>
+        </div>
+        <button
+          onClick={(e) => e.stopPropagation()}
+          style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: 16,
+            padding: "2px 4px", borderRadius: 4
+          }}>
+            ...
+          </button>
+      </div>
+      <div style={{ paddingTop: 10, borderTop: "0.5px solid #f1f5f9", display: "flex", alignItems: "center",
+        justifyContent: "space-between", minHeight: 24
+      }}>
+        {candidate.score !== null ? (
+          <>
+          <StarRating score = {candidate.score}/>
+          {candidate.referred && (
+            <span style={{ fontSize: 10, color: "#7c3aed", background: "#f5f3ff", padding: "2px 8px", borderRadius: 10,
+              display: "flex", alignItems: "center", gap: 4
+            }}>
+              👥 Referred
+            </span>
+          )}
+          </>
+        ) : (
+          <span style={{ fontSize: 12, color: "#94a3b8", display: "flex", alignItems: "center",
+            gap: 4
+          }}>
+            <span style={{ fontSize: 14}}>+</span> Add Assessment
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+ 
