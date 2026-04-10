@@ -142,4 +142,72 @@ function CandidateCard({ candidate, onOpen, onDragStart, onDragEnd}){
     </div>
   );
 }
- 
+
+// Kanban Column
+
+function Column({ col, candidates, onOpen, onDrop, draggingId}){
+  const [isOver, setIsOver] = useState(false);
+
+  const colColors = {
+    applying: { badge: "#fff7ed", text: "#c2410c", border: "#fed7aa"},
+    screening: { badge: "#f5f3ff", text: "#6d28d9", border: "#ddd6fe"},
+    interview: {badge: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe"},
+    test: { badge: "#f0fdf4", text: "#15803d", border: "#bbf7d0"},
+  };
+  const cc = colColors[col.id];
+
+  return (
+    <div
+      style = {{ flex: "0 0 260px", display: "flex", flexDirection: "column", gap: 10}}
+      onDragOver = {(e) => { e.preventDefault(); setIsOver(true); }}
+      onDragLeave = {() => setIsOver(false)}
+      onDrop = {(e) => {e.preventDefault(); setIsOver(false); onDrop(col.id); }}
+    >
+        // Column header 
+          <div style = {{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4}}>
+          <div style = {{ display: "flex", alignItems: "center", gap: 8}}>
+            <span style={{
+              background: cc.badge, color: cc.text,
+              border: '0.5px solid ${cc.border}',
+              padding: "3px 10px", borderRadius: 12, fontSize: 12, fontWeight: 500,
+            }}>
+              {col.label}
+            </span>
+            <span style={{ fontSize: 12, color: "#94a3b8"}}>{candidates.length}</span>
+          </div>
+          <span style={{ fontSize: 11, color: cc.text, cursor: "pointer"}}>Detail ›</span>
+        </div>
+
+        // Drop zone highlight
+        {isOver && draggingId && (
+          <div style={{
+            height: 4, borderRadius: 4,
+            background: col.color,
+            marginBottom: 2,
+            transition: "opacity 0.15s",
+          }} />
+        )}
+
+        // Cards
+        {candidates.length === 0 ? (
+          <div style={{
+            minHeight: 80, border: '1.5px dashed ${isOver ? col.color : "#e2e8f0"}',
+            borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 12, color: isOver ? col.color: "#cbd5e1",
+            background: isOver ? `${col.color}10` : "transparent",
+            transition: "all 0.15s"
+          }}>
+            Drop here
+          </div>
+        ) : (
+          candidates.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              onOpen={onOpen}
+            />
+          ))
+        )}
+      </div>
+  );
+}
