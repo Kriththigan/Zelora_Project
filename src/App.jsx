@@ -211,3 +211,98 @@ function Column({ col, candidates, onOpen, onDrop, draggingId}){
       </div>
   );
 }
+
+// Detail Model
+
+function Model({ candidate, onClose, onMove }){
+  if(!candidate) return null;
+  const currentCol = COLUMNS.find((c) => c.id === candidate.length);
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.45",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 200, padding: 16,
+      }}
+    >
+      <div style={{
+        background: "#fff", borderRadius: 16, padding: 24, width: "100%", maxWidth: 380,
+        border: "0.5px solid #e2e8f0", position: "relative",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+      }}>
+        <button
+          onClick={onClose}
+          style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none",
+            fontSize: 18, color: "#94a3b8", cursor: "pointer"
+          }} >
+            x
+          </button>
+
+          <div style={{display: "flex", alignItems: "center", gap: 14, marginBottom: 18}}>
+            <Avatar candidate={candidate} size={48}/>
+            <div>
+              <div style = {{ fontSize: 16, fontWeight: 500, color: "#0f172a"}}>
+                {candidate.name}
+              </div>
+              <div style = {{fontSize: 12, color: "#94a3b8", marginTop: 2}}>Applied at {candidate.date}</div>
+            </div>
+          </div>
+
+           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 18 }}>
+          <InfoRow label="Current stage">
+            <span style={{
+              background: "#f8fafc", border: "0.5px solid #e2e8f0",
+              padding: "3px 10px", borderRadius: 8, fontSize: 13, color: "#334155",
+            }}>
+              {currentCol?.label}
+            </span>
+          </InfoRow>
+          <InfoRow label="Score">
+            {candidate.score !== null
+              ? <span style={{ fontSize: 14, color: "#0f172a" }}><span style={{ color: "#f59e0b" }}>★</span> {candidate.score} / 5.0</span>
+              : <span style={{ fontSize: 13, color: "#94a3b8" }}>Not scored yet</span>
+            }
+          </InfoRow>
+          <InfoRow label="Referred">
+            <span style={{ fontSize: 13, color: candidate.referred ? "#7c3aed" : "#94a3b8" }}>
+              {candidate.referred ? "✓ Yes" : "No"}
+            </span>
+          </InfoRow>
+        </div>
+
+        <div style = {{ borderTop: "0.5px solid #f1f5f9", paddingTop: 16}}>
+          <div style = {{ fontSize: 12, color: "#94a3b8", marginBottom: 10}} > Move to Stage</div>
+          <div style = {{ display: "flex", flexWrap: "wrap", gap: 8}} >
+            {COLUMNS.map((col) => (
+              <button
+                key={col.id}
+                onClick={() => {onMove(candidate.id, col.id); onClose(); }}
+                style={{
+                  padding: "6px 14px", borderRadius: 8, fontSize: 12,
+                  border: candidate.stage === col.id ? `1.5px solid ${col.color}` : "0.5px solid #e2e8f0",
+                  background: candidate.stage === col.id ? `${col.color}15` : "#f8fafc",
+                  color: candidate.stage === col.id ? col.color : "#475569",
+                  cursor: "pointer", fontWeight: candidate.stage === col.id ? 500 : 400,
+                  transition: "all 0.12s",
+                }}
+                >
+                  {col.label}
+                </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, children}){
+  return (
+    <div style = {{ display: "flex", alignItems: "center", justifyContent: "space-between"}} >
+      <span style={{ fontSize: 13, color: "#64748b"}}>{label}</span>
+      {children}
+    </div>
+  );
+}
