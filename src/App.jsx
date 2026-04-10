@@ -306,3 +306,45 @@ function InfoRow({ label, children}){
     </div>
   );
 }
+
+// Top Bar
+
+function TopBar(){
+  return (
+    <div style={{ background: "#1a1f2e", display: "flex", alignItems: "center", gap: 20, padding: "0 20px",
+      height: 52, flexShrink: 0
+    }}>
+      <div style = {{ display: "flex", alignItems: "center", gap: 8}}>
+        <div style={{ width: 28, height: 28, background: "#f97316", borderRadius: 6, display: "flex",
+          alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700,
+          color: "#fff"
+        }}>T</div>
+             <span style={{ color: "#fff", fontWeight: 500, fontSize: 16}}>tiimi</span>
+             <span style={{ color: "rgba(255, 255, 255, 0.3)", fontSize: 14, marginLeft: 8}}>
+              Recruitment
+             </span>
+      </div>
+      <div style={{ display: "flex", gap: 4, marginLeft: "auto"}}>
+        {[
+          { label: "Jobs", badge: "8"},
+          { label: "Candidate", badge: "551"},
+          { label: "Career Site", badge: null},
+        ].map(({ label, badge}, i) => (
+          <div key={label} style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "6px 14px", borderRadius: 6, cursor: "pointer",
+            background: i === 0 ? "rgba(255,255,255,0.14)" : "transparent",
+            color: i === 0 ? "#fff" : "rgba(255,255,255,0.5)", fontSize: 13,
+          }}>
+            {label}
+            {badge && (
+              <span style={{ background: "rgba(255,255,255,0.2)", borderRadius: 10, padding: "1px 7px", fontSize: 11 }}>
+                {badge}
+              </span>
+            )}
+            </div>
+        ))}
+      </div>
+    </div>
+  );
+}
