@@ -348,3 +348,49 @@ function TopBar(){
     </div>
   );
 }
+
+// Page Header
+
+const PAGE_TABS = ["Candidates", "Job Info", "Calendar", "Score Card", "Activity", "Application Form", "Automation"];
+
+function PageHeader({ activeTab, setActiveTab}){
+  return (
+    <div style = {{ background: "#fff", borderBottom: "0.5px solid #e2e8f0", padding: "14px 20px 0", flexShrink: 0}}>
+      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 10, marginBottom: 10}}>
+        <span style = {{ fontSize: 20, fontWeight: 500, color: "#0f172a"}}>
+          Research and Development Officer
+        </span>
+        <span style = {{ background: "#dcfce7", color: "#15803d", fontSize: 11, padding: "2px 10px",
+          borderRadius: 12, fontWeight: 500
+        }}>● Open</span>
+        <span style={{ fontSize: 12, color: "#94a3b8"}}>
+          Researcher · Onsite · Created by Bagus Fikri
+        </span>
+        <span style={{ marginLeft: "auto", fontSize: 12, color: "#94a3b8"}}>1 of 8</span>
+      </div>
+      <div style={{ display: "flex", gap: 2, overflowX: "auto"}}>
+        {PAGE_TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            style={{
+              padding: "8px 14px", fontSize: 13, background: "none", border: "none",
+              borderBottom: activeTab === tab ? "2px solid #0f172a" : "2px solid transparent",
+              color: activeTab === tab ? "#0f172a" : "#64748b",
+              fontWeight: activeTab === tab ? 500 : 400,
+              cursor: "pointer", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6,
+            }}
+            >
+              {tab}
+              {tab === "Automation" && (
+                <span style={{ background: "#ede9fe", color: "#6d28d9", fontSize: 10,
+                  padding: "1px 6px", borderRadius: 10
+                }}>5
+                </span>
+              )}
+            </button>
+        ))}
+      </div>
+    </div>
+  );
+}
