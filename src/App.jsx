@@ -429,3 +429,64 @@ function Toolbar({ search, setSearch}){
     </div>
   );
 }
+
+// App Root
+
+export default function App(){
+  const [candidates, setCandidates] = useState(INITIAL_CANDIDATES);
+  const [activeTab, setActiveTab] = useState("Candidates");
+  const [search, setSearch] = useState("");
+  const [modalId, setModalId] = useState(null);
+  const draggingId = useRef(null);
+
+  const filteredCandidates = candidates.filter((c) =>
+    c.name.toLocaleLowerCase().includes(search.toLowerCase())
+  );
+
+  function moveCandidate(id, newStage){
+    setCandidates((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, stage: newStage} : c))
+    );
+  }
+
+  function handleDrop(colId){
+    if(draggingId.current !== null){
+      moveCandidate(draggingId.current, colId);
+      draggingId.current = null;
+    }
+  }
+
+  const modalCandidate = candidates.find((c) => c.id === modalId) || null;
+
+  return(
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", fontFamily: "'DM Sans', 'Segoe UI', sans-serif", background: "#f8fafc"
+    }}>
+      <TopBar />
+      <PageHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Toolbar search={search} setSearch={setSearch} />
+
+      <div style={{ display: "flex", gap: 14, padding: "16px 20px", overflowX: "auto",
+        flex: 1, alignItems: "flex-start"
+      }}>
+        {COLUMNS.map((col) => (
+          <Column
+          key={col.id}
+          col={col}
+          candidates={filteredCandidates.filter((c) => c.stage === col.id)}
+          onOpen={setModalId}
+          onDrop={handleDrop}
+          draggingId={draggingId.current}
+          />
+        ))}
+      </div>
+
+      {modalCandidate && (
+        <Model
+        candidate={modalCandidate}
+        onClose={() => setModalId(null)}
+        onMove={moveCandidate}
+        />
+      )}
+    </div>
+  );
+}
