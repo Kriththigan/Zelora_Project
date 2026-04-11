@@ -394,3 +394,38 @@ function PageHeader({ activeTab, setActiveTab}){
     </div>
   );
 }
+
+// Toolbar
+
+function Toolbar({ search, setSearch}){
+  return (
+    <div style={{ background: "#fff", borderBottom: "0.5px solid #e2e8f0", display: "flex",
+      alignItems: "center", flexWrap: "wrap", gap: 8, padding: "10px 20px", flexShrink: 0
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#f8fafc",
+        border: "0.5px solid #e2e8f0", borderRadius: 8, padding: "6px 12px", width: 200
+      }}>
+        <span style={{ fontSize: 13, color: "#94a3b8"}}>🔍</span>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search"
+          style={{ border: "none", background: "transparent", outline: "none", fontSize: 13, color: "#0f172a", width: "100%"}}
+          />
+      </div>
+      {["📅 Date Range", "⭐ Score Range", "⚙ Advance Filter"].map((f) => (
+        <button key={f} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", border: "0.5px solid #e2e8f0", borderRadius: 8, fontSize: 12, color: "#64748b", cursor: "pointer", background: "#fff" }}>
+          {f} ⌄
+        </button>
+      ))}
+      <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+        <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", border: "0.5px solid #e2e8f0", borderRadius: 8, fontSize: 12, color: "#64748b", cursor: "pointer", background: "#fff" }}>
+          👥 Refer People
+        </button>
+        <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", border: "0.5px solid #cbd5e1", borderRadius: 8, fontSize: 12, color: "#0f172a", cursor: "pointer", background: "#fff", fontWeight: 500 }}>
+          ⬛ Kanban ⌄
+        </button>
+      </div>
+    </div>
+  );
+}
