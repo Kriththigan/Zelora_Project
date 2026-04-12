@@ -168,7 +168,7 @@ function Column({ col, candidates, onOpen, onDrop, draggingId }) {
 
   return (
     <div
-      style={{ flex: "0 0 272px", display: "flex", flexDirection: "column", gap: 8 }}
+      style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 8, overflow: "hidden" }}
       onDragOver={(e) => { e.preventDefault(); setIsOver(true); }}
       onDragLeave={() => setIsOver(false)}
       onDrop={(e) => { e.preventDefault(); setIsOver(false); onDrop(col.id); }}
@@ -198,28 +198,30 @@ function Column({ col, candidates, onOpen, onDrop, draggingId }) {
       )}
 
       {/* Cards or empty drop zone */}
-      {candidates.length === 0 ? (
-        <div style={{
-          minHeight: 80,
-          border: `2px dashed ${isOver ? col.color : "#e2e8f0"}`,
-          borderRadius: 10,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 12,
-          color: isOver ? col.color : "#cbd5e1",
-          background: isOver ? `${col.color}10` : "transparent",
-          transition: "all 0.15s",
-        }}>
-          Drop here
-        </div>
-      ) : (
-        candidates.map((c) => (
-          <CandidateCard
-            key={c.id}
-            candidate={c}
-            onOpen={onOpen}
-          />
-        ))
-      )}
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8, paddingRight: 2 }}>
+        {candidates.length === 0 ? (
+          <div style={{
+            minHeight: 80,
+            border: `2px dashed ${isOver ? col.color : "#e2e8f0"}`,
+            borderRadius: 10,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 12,
+            color: isOver ? col.color : "#cbd5e1",
+            background: isOver ? `${col.color}10` : "transparent",
+            transition: "all 0.15s",
+          }}>
+            Drop here
+          </div>
+        ) : (
+          candidates.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              onOpen={onOpen}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -228,7 +230,6 @@ function Column({ col, candidates, onOpen, onDrop, draggingId }) {
 
 function Modal({ candidate, onClose, onMove }) {
   if (!candidate) return null;
-  
   const currentCol = COLUMNS.find((c) => c.id === candidate.stage);
 
   return (
@@ -236,7 +237,6 @@ function Modal({ candidate, onClose, onMove }) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       style={{
         position: "fixed", inset: 0,
-        
         background: "rgba(15,23,42,0.45)",
         display: "flex", alignItems: "center", justifyContent: "center",
         zIndex: 300, padding: 16,
@@ -499,8 +499,18 @@ export default function App() {
 
   const modalCandidate = candidates.find((c) => c.id === modalId) || null;
 
+  if (typeof document !== "undefined" && !document.getElementById("rkb-reset")) {
+    const s = document.createElement("style");
+    s.id = "rkb-reset";
+    s.textContent = `
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body, #root { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    `;
+    document.head.appendChild(s);
+  }
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", background: "#f4f5f7", overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", width: "100vw", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", background: "#f4f5f7", overflow: "hidden" }}>
       <TopBar />
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
@@ -511,7 +521,7 @@ export default function App() {
           <Toolbar search={search} setSearch={setSearch} />
 
           {/* Board */}
-          <div style={{ display: "flex", gap: 14, padding: "16px 20px", overflowX: "auto", overflowY: "hidden", flex: 1, alignItems: "flex-start" }}>
+          <div style={{ display: "flex", gap: 14, padding: "16px 20px", overflow: "hidden", flex: 1 }}>
             {COLUMNS.map((col) => (
               <Column
                 key={col.id}
