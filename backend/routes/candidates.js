@@ -2,9 +2,16 @@ const express = require('express');
 const router = express.Router();
 const candidates = require('../data/candidates');
 
-// GET /api/candidates - list all
+// GET /api/candidates - list all (with optional stage filter)
 router.get('/', (req, res) => {
-  res.json(candidates);
+  const { stage } = req.query;
+
+  let result = candidates;
+  if (stage) {
+    result = candidates.filter(c => c.stage === stage);
+  }
+
+  res.json(result);
 });
 
 // GET /api/candidates/:id - single candidate
