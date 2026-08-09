@@ -14,6 +14,17 @@ app.get('/', (req, res) => {
 
 app.use('/api/candidates', candidateRoutes);
 
+// 404 handler for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong on the server' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
