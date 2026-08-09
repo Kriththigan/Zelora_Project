@@ -1,6 +1,14 @@
-# Recruitment Kanban — React UI
+# Zelora Recruitment Kanban — Full Stack
 
-A recruitment pipeline management UI built with React and plain CSS (inline styles), closely matching the tiimi design mockup.
+A recruitment pipeline management app with a Kanban-style board, built as a full-stack solution: a React (Vite) frontend and a Node.js/Express REST API backend.
+
+---
+
+## Project Structure
+Zelora_Project/
+├── frontend/ # React + Vite UI
+├── backend/ # Node.js + Express REST API
+└── README.md # This file
 
 ---
 
@@ -10,82 +18,121 @@ A recruitment pipeline management UI built with React and plain CSS (inline styl
 - Node.js v18 or higher
 - npm v9 or higher
 
-### Install & Run
+### 1. Install dependencies
 
 ```bash
-# 1. Clone or unzip the project
-cd recruitment-kanban
-
-# 2. Install dependencies
+# Backend
+cd backend
 npm install
 
-# 3. Start the development server
-npm run dev
+# Frontend (in a separate terminal)
+cd frontend
+npm install
 ```
 
-The app will open at **http://localhost:5173**
+### 2. Run both servers
 
-### Build for Production
+You need **two terminals** running at the same time.
 
+**Terminal 1 — Backend:**
 ```bash
-npm run build
-npm run preview
-```
-
----
-
-## Project Structure
-
-```
-src/
-└── App.jsx          # All components and logic (single-file architecture)
-    ├── TopBar        — Dark navigation bar with Jobs/Candidate/Career Site tabs
-    ├── LeftSidebar   — Dark vertical nav icons
-    ├── RightSidebar  — White utility icons panel
-    ├── PageHeader    — Job title, meta info, tab navigation
-    ├── Toolbar       — Search, filters, Kanban view toggle
-    ├── Column        — Kanban column with drag-and-drop zone
-    ├── CandidateCard — Individual candidate card with score/referred tag
-    ├── Avatar        — Colored initials avatar
-    ├── StarRating    — Star + score display
-    ├── InfoRow       — Label/value row used in modal
-    └── Modal         — Candidate detail view with stage-move buttons
-```
-
----
-
-## Features Implemented
-
-| Requirement | Status |
-|---|---|
-| React for the UI | ✅ React 19 + Vite |
-| Plain CSS (no Tailwind) | ✅ All styles are inline CSS via `style={{}}` |
-| Responsive layout | ✅ Sidebars hide on mobile, board scrolls |
-| Dummy data (hardcoded JSON) | ✅ 14 candidates across 4 stages |
-| Modular reusable components | ✅ 9 named components |
-| Kanban-style column layout | ✅ 4 stages: Applying Period, Screening, Interview, Test |
-| Viewing candidate details | ✅ Click any card → modal with full details |
-| Moving candidates between stages | ✅ Drag-and-drop (HTML5 native) + modal stage buttons |
-
----
-
-## Design Decisions & Assumptions
-
-- **Single-file architecture**: All components live in `App.jsx` for simplicity. In a larger codebase, each component would be split into its own file under `src/components/`.
-- **Inline styles instead of CSS Modules**: Chosen to avoid needing a build-step config change. Inline styles provide full scoping with zero setup.
-- **No backend**: All data is hardcoded in `INITIAL_CANDIDATES`. In production this would be fetched from an API.
-- **Avatar initials instead of photos**: The design references user photos, but since no photo assets were provided, colored initials circles are used — each candidate gets a consistent color derived from their ID.
-- **Drag-and-drop**: Implemented using the HTML5 native Drag and Drop API (`draggable`, `onDragStart`, `onDrop`) — no third-party library required.
-- **Column counts**: The column header badge shows the current filtered count (live), not the static total shown in the original design (27, 23, etc.), which reflects real-time state.
-- **No backend/frontend split**: This is a purely frontend project. There is no separate backend to run.
-
----
-
-## No Backend
-
-This project is frontend-only. There is no server, API, or database. Everything runs in the browser.
-
-```
-# Only one command needed:
+cd backend
 npm run dev
 ```
+Runs on **http://localhost:5000**
+
+**Terminal 2 — Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+Runs on **http://localhost:5173**
+
+### 3. Open the app
+
+Go to **http://localhost:5173** in your browser. The frontend fetches candidate data live from the backend API.
+
+> **Note:** The backend must be running for the frontend to load data. If you see an error screen, make sure `npm run dev` is running inside `backend/`.
+
+---
+
+## API Endpoints
+
+Base URL: `http://localhost:5000/api/candidates`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/candidates` | List all candidates |
+| GET | `/api/candidates?stage=screening` | Filter candidates by stage |
+| GET | `/api/candidates?sortBy=score` | Sort by score (or `date`) |
+| GET | `/api/candidates?page=1&limit=5` | Paginate results |
+| GET | `/api/candidates/:id` | Get a single candidate |
+| POST | `/api/candidates` | Create a new candidate |
+| PUT | `/api/candidates/:id` | Update a candidate (full or partial) |
+| PATCH | `/api/candidates/:id/stage` | Update only the candidate's stage (used for drag-and-drop) |
+| DELETE | `/api/candidates/:id` | Delete a candidate |
+
+Valid `stage` values: `applying`, `screening`, `interview`, `test`
+
+### Example: Create a candidate
+```bash
+POST /api/candidates
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "stage": "applying",
+  "score": 4,
+  "referred": true,
+  "assessmentStatus": "Not Started"
+}
+```
+
+### Example: Move a candidate's stage
+```bash
+PATCH /api/candidates/1/stage
+Content-Type: application/json
+
+{
+  "stage": "interview"
+}
+```
+
+---
+
+## Candidate Data Model
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Auto-generated |
+| `name` | string | Candidate's full name |
+| `date` | string | Application date |
+| `score` | number \| null | Overall score |
+| `referred` | boolean | Referral status |
+| `stage` | string | One of the 4 pipeline stages |
+| `pi` | number | Avatar palette index (used for UI color) |
+| `assessmentStatus` | string | `Not Started`, `Pending`, or `Completed` |
+
+---
+
+## Assumptions & Design Decisions
+
+- **In-memory data store**: The backend stores candidates in a JavaScript array (`backend/data/candidates.js`), not a database. Data resets to the initial 14 candidates whenever the server restarts (e.g. on every `nodemon` reload during development).
+- **Full-stack integration**: The frontend fetches candidates from the API on load and calls the `PATCH /:id/stage` endpoint when a card is dragged to a new column, so stage changes persist on the backend (until the server restarts).
+- **CORS**: Enabled on the backend (`cors` middleware) to allow requests from the frontend's dev server on a different port.
+- **Validation**: `name` and `stage` are required on candidate creation; `stage` must be one of the 4 valid pipeline stages on create, update, or patch.
+- **No authentication**: Out of scope for this task — all endpoints are open.
+
+---
+
+## Tech Stack
+
+- **Frontend**: React 19, Vite, inline CSS (no Tailwind, per task requirements)
+- **Backend**: Node.js, Express 5, CORS middleware, in-memory data store
+- **Tooling**: nodemon (backend hot-reload), Postman (API testing)
+
+---
+
+## Notes
+
+This is an unpaid internship selection task, solely intended to assess technical capabilities. It will not be used in production or for any commercial purpose.
