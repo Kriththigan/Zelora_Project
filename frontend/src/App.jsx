@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // Data
 
@@ -476,11 +476,29 @@ function Toolbar({ search, setSearch }) {
 // App Root
 
 export default function App() {
-  const [candidates, setCandidates] = useState(INITIAL_CANDIDATES);
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab]   = useState("Candidates");
   const [search, setSearch]         = useState("");
   const [modalId, setModalId]       = useState(null);
   const draggingId                  = useRef(null);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/candidates")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch candidates");
+        return res.json();
+      })
+      .then((data) => {
+        setCandidates(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   const filteredCandidates = candidates.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
@@ -488,6 +506,12 @@ export default function App() {
 
   function moveCandidate(id, newStage) {
     setCandidates((prev) => prev.map((c) => (c.id === id ? { ...c, stage: newStage } : c)));
+
+    fetch(`http://localhost:5000/api/candidates/${id}/stage`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stage: newStage }),
+    }).catch((err) => console.error("Failed to update stage on server:", err));
   }
 
   function handleDrop(colId) {
@@ -498,6 +522,22 @@ export default function App() {
   }
 
   const modalCandidate = candidates.find((c) => c.id === modalId) || null;
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", fontFamily: "sans-serif", color: "#64748b" }}>
+        Loading candidates...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", fontFamily: "sans-serif", color: "#dc2626" }}>
+        Error: {error}. Make sure the backend server is running on port 5000.
+      </div>
+    );
+  }
 
   if (typeof document !== "undefined" && !document.getElementById("rkb-reset")) {
     const s = document.createElement("style");
